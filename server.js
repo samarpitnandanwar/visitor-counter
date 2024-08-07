@@ -1,29 +1,29 @@
-// server.js
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: '*', // Allow all origins. You can restrict this to your frontend domain for better security.
+}));
 
 // MongoDB URI
-const mongoURI = "mongodb+srv://visitors:visitors@visitors.rs3k7.mongodb.net/?retryWrites=true&w=majority&appName=visitors";
+const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://visitors:visitors@visitors.rs3k7.mongodb.net/?retryWrites=true&w=majority&appName=visitors';
 
-mongoose
-  .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log(err));
 
 // Define the schema and model
 const visitorSchema = new mongoose.Schema({
-  count: Number,
+  count: Number
 });
 
-const Visitor = mongoose.model("Visitor", visitorSchema);
+const Visitor = mongoose.model('Visitor', visitorSchema);
 
 // API endpoint to get visitor count
-app.get("/api/visitor", async (req, res) => {
+app.get('/api/visitor', async (req, res) => {
   try {
     let visitor = await Visitor.findOne();
     if (!visitor) {
@@ -37,7 +37,7 @@ app.get("/api/visitor", async (req, res) => {
 });
 
 // API endpoint to increment visitor count
-app.post("/api/visitor/increment", async (req, res) => {
+app.post('/api/visitor/increment', async (req, res) => {
   try {
     let visitor = await Visitor.findOne();
     if (!visitor) {
